@@ -1,0 +1,7 @@
+# Ignore files related to API keys
+.env
+
+# Ignore node_modules folder
+./worker/node_modules
+./client/node_modules
+./server/node_modules

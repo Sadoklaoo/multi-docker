@@ -16,7 +16,7 @@ jobs:
       - name: Docker run react-tests
         run: docker run -e CI=true sadoklao/react-test npm test
         
-
+      # Create prod images
       - name: Dockerfile Build multi-client
         run: docker build -t sadoklao/multi-client  ./client
       - name: Dockerfile Build multi-nginx
@@ -26,4 +26,12 @@ jobs:
       - name: Dockerfile Build multi-worker
         run: docker build -t sadoklao/multi-worker  ./worker
 
-     
+      # Deploy to images to dockerhub
+      - name: Push multi-client image
+        run: docker push sadoklao/multi-client
+      - name: Push multi-nginx image
+        run: docker push sadoklao/multi-nginx
+      - name: Push multi-server image
+        run: docker push sadoklao/multi-server
+      - name: Push multi-worker image
+        run: docker push sadoklao/multi-worker
