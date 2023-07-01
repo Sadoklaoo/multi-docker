@@ -35,3 +35,27 @@ jobs:
         run: docker push sadoklao/multi-server
       - name: Push multi-worker image
         run: docker push sadoklao/multi-worker
+
+      - name: Generate deployment package
+        run: zip -r deploy.zip . -x '*.git*'
+ 
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+          aws-region: eu-west-3
+
+      - name: Upload package to S3 bucket
+        run: aws s3 cp deploy.zip s3://my-docker-bucket-sadok/
+  
+      - name: Create new ElasticBeanstalk Application Version
+        run: |
+            aws elasticbeanstalk create-application-version \
+            --application-name Docker-react \
+            --source-bundle S3Bucket="my-docker-bucket-sadok",S3Key="deploy.zip" \
+            --version-label "ver-${{ github.sha }}" \
+            --description "commit-sha-${{ github.sha }}"
+  
+      - name: Deploy new ElasticBeanstalk Application Version
+        run: aws elasticbeanstalk update-environment --environment-name Docker-react-env --version-label "ver-${{ github.sha }}"
