@@ -1,0 +1,29 @@
+name: Deploy Multi-Containers
+on:
+  push:
+    branches:
+      - main # check your repo, your default branch might be master!
+ 
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Docker Login
+        run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+      - name: Dockerfile.dev Build for tests
+        run: docker build -t sadoklao/react-test -f ./client/Dockerfile.dev ./client
+      - name: Docker run react-tests
+        run: docker run -e CI=true sadoklao/react-test npm test
+        
+
+      - name: Dockerfile Build multi-client
+        run: docker build -t sadoklao/multi-client  ./client
+      - name: Dockerfile Build multi-nginx
+        run: docker build -t sadoklao/multi-nginx  ./nginx
+      - name: Dockerfile Build multi-server
+        run: docker build -t sadoklao/multi-server  ./server
+      - name: Dockerfile Build multi-worker
+        run: docker build -t sadoklao/multi-worker  ./worker
+
+     
