@@ -58,4 +58,4 @@ jobs:
             --description "commit-sha-${{ github.sha }}"
   
       - name: Deploy new ElasticBeanstalk Application Version
-        run: aws elasticbeanstalk update-environment --environment-name Docker-react-env --version-label "ver-${{ github.sha }}"
+        run: aws elasticbeanstalk update-environment --environment-name Docker-multi-container-env --version-label "ver-${{ github.sha }}"
